@@ -7,8 +7,8 @@ proxy-groups:
   - name: 🎥 NETFLIX
     type: select
     proxies:
-      - 🎯 全球直连
       - 🔰 节点选择
+      - 🎯 全球直连
   - name: ⛔️ 广告拦截
     type: select
     proxies:
@@ -34,8 +34,8 @@ proxy-groups:
   - name: Ⓜ️ 微软服务
     type: select
     proxies:
-      - 🎯 全球直连
       - 🔰 节点选择
+      - 🎯 全球直连
   - name: 📲 电报信息
     type: select
     proxies:
@@ -58,8 +58,8 @@ proxy-groups:
   - name: 🐟 漏网之鱼
     type: select
     proxies:
-      - 🎯 全球直连
       - 🔰 节点选择
+      - 🎯 全球直连
 rules:
   - DOMAIN-SUFFIX,local,🎯 全球直连
   - IP-CIDR,192.168.0.0/16,🎯 全球直连,no-resolve

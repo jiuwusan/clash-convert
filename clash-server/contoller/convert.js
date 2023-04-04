@@ -250,11 +250,20 @@ const convert = async (ctx) => {
 
     // 构建 
     template.proxies = proxies;
+    let selectIdx = template['proxy-groups'].findIndex((item) => {
+        return item.name.indexOf('节点选择' > -1)
+    })
+
+    let emojis = ['🐯', '🦁', '🐮', '🐷', '🐸', '🐔', '🐧', '🐦', '🐌', '🦋', '🐍', '🐓',
+        '🐫', '🐙', '🦑', '🦐', '🦞', '🦀', '🕊', '🦩', '🦒', '🦮', '🐀', '🐿',
+        '🦎', '🦖', '🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐻‍❄️', '🐨']
+
     for (const key in proxyGroups) {
         if (Object.hasOwnProperty.call(proxyGroups, key)) {
-            template['proxy-groups'][0].proxies.push(`${key} - Auto`);
+            let size = template['proxy-groups'][0].proxies.length;
+            template['proxy-groups'][selectIdx].proxies.splice(size - 1, 0, `${emojis[size]} ${key} - Auto`);
             template['proxy-groups'].push({
-                name: `${key} - Auto`,
+                name: `${emojis[size]} ${key} - Auto`,
                 type: 'url-test',
                 url: 'http://www.gstatic.com/generate_204',
                 interval: 180,
@@ -262,6 +271,7 @@ const convert = async (ctx) => {
             })
         }
     }
+
     ctx.set('Content-disposition', 'attachment;filename=merge.yaml');
     ctx.set('Content-type', 'application/pdf');
     ctx.body = YAML.dump(template)
