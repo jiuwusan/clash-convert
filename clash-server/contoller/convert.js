@@ -297,7 +297,7 @@ const convert = async (ctx) => {
 
 
 const genLink = (ctx) => {
-    let { urls, rename = 'config.yaml', proxyGroups, cusRules, client, baseApi = '' } = ctx.request.body;
+    let { urls, rename = 'config', proxyGroups, cusRules, client, baseApi = '' } = ctx.request.body;
 
     let data = {
         rename,
