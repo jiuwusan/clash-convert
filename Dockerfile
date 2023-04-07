@@ -9,6 +9,7 @@ RUN npm install
 RUN npm run build
 WORKDIR /app
 RUN mv clash-fe/build/ clash-server/public/sub-web/
+RUN rm -rf clash-fe
 # cd到 后端 文件夹下
 WORKDIR /app/clash-server
 # 安装项目依赖包
