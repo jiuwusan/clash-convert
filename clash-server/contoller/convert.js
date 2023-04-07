@@ -2,6 +2,7 @@ const fs = require('fs');
 const YAML = require('js-yaml');
 const router = require('koa-router')();
 const https = require('https')
+const database = require('../database/index')
 
 const COUNTRYS = [{ "English": "HK", "Chinese": "香港", "id": "1001" },
 { "English": "TW", "Chinese": "台湾", "id": "1002" },
@@ -215,27 +216,33 @@ const readFileNetwork = (url) => {
     })
 }
 
+
+
 /**
  * 查询列表
  * 
  * @param {*} ctx 
  */
 const convert = async (ctx) => {
-    let { rss } = ctx.request.query;
+    let { uid } = ctx.request.query;
+    let config = {}
+    if (uid) // 读取 JSON
+        config = database.query(uid);
     let proxies = [];
-    let proxiesArr = [];
-    if (rss)
-        proxiesArr = decodeURIComponent(rss).split(',');
-    let templatePath = ctx.genPath('/template/clash.yaml');
-    let template = YAML.load(fs.readFileSync(templatePath, 'utf8'));
-    for (let i = 0; i < proxiesArr.length; i++) {
+
+    for (let i = 0; i < config.urls.length; i++) {
         try {
-            let sub = YAML.load(await readFileNetwork(proxiesArr[i]));
+            let sub = YAML.load(await readFileNetwork(config.urls[i]));
             proxies.push.apply(proxies, sub.proxies);
         } catch (error) {
-            console.log(`${proxiesArr[i]} 订阅出错`);
+            console.log(`${config.urls[i]} 订阅出错`);
         }
     }
+
+    // proxies = proxies.map((item) => {
+    //     item.name = item.name.replace(/\ +/g, ' ')
+    //     return item
+    // });
 
     // 分组
     let proxyGroups = proxies.reduce((prev, next) => {
@@ -249,8 +256,9 @@ const convert = async (ctx) => {
     }, {})
 
     // 构建 
-    template.proxies = proxies;
-    let selectIdx = template['proxy-groups'].findIndex((item) => {
+    config.proxies = proxies;
+
+    let selectIdx = config['proxy-groups'].findIndex((item) => {
         return item.name.indexOf('节点选择' > -1)
     })
 
@@ -260,9 +268,9 @@ const convert = async (ctx) => {
 
     for (const key in proxyGroups) {
         if (Object.hasOwnProperty.call(proxyGroups, key)) {
-            let size = template['proxy-groups'][0].proxies.length;
-            template['proxy-groups'][selectIdx].proxies.splice(size - 1, 0, `${emojis[size]} ${key} - Auto`);
-            template['proxy-groups'].push({
+            let size = config['proxy-groups'][selectIdx].proxies.length;
+            config['proxy-groups'][selectIdx].proxies.splice(size - 1, 0, `${emojis[size]} ${key} - Auto`);
+            config['proxy-groups'].push({
                 name: `${emojis[size]} ${key} - Auto`,
                 type: 'url-test',
                 url: 'http://www.gstatic.com/generate_204',
@@ -272,11 +280,64 @@ const convert = async (ctx) => {
         }
     }
 
-    ctx.set('Content-disposition', 'attachment;filename=merge.yaml');
+    let rules = YAML.load(fs.readFileSync(ctx.genPath('/template/rules.yaml'), 'utf8')).rules;
+    rules.splice(10, 0, ...config['cus-rules']);
+    config.rules = rules;
+    ctx.set('Content-disposition', `attachment;filename=${config.rename}.yaml`);
     ctx.set('Content-type', 'application/pdf');
-    ctx.body = YAML.dump(template)
+    delete config.rename;
+    delete config['cus-rules'];
+    delete config.urls;
+    // 通用配置
+    let clash = YAML.load(fs.readFileSync(ctx.genPath('/template/clash.yaml'), 'utf8'));
+    let lastConfig = { ...clash, proxies: config.proxies, 'proxy-groups': config['proxy-groups'], rules: config.rules }
+    console.log(JSON.stringify(lastConfig));
+    ctx.body = YAML.dump(lastConfig)
 }
 
-router.get('/link', convert);
+
+const genLink = (ctx) => {
+    let { urls, rename = 'config.yaml', proxyGroups, cusRules, client, baseApi = '' } = ctx.request.body;
+
+    let data = {
+        rename,
+        urls: urls.split('\n'),
+        proxies: [],
+        'proxy-groups': proxyGroups.map((item) => {
+            // 交换 位置
+            let i = item.checked || 0;
+            let temp = item.proxies[i];
+            item.proxies[i] = item.proxies[0];
+            item.proxies[0] = temp;
+            return item
+        }),
+        'cus-rules': cusRules ? cusRules.split('\n') : [],
+    }
+
+    let uid = database.push(data);
+
+    ctx.body = {
+        code: 0,
+        data: {
+            rss: `${baseApi}/rss?uid=${uid}`
+        }
+    }
+
+}
+
+const getRules = (ctx) => {
+    let templatePath = ctx.genPath('/template/group.yaml');
+    let template = YAML.load(fs.readFileSync(templatePath, 'utf8'));
+
+    ctx.body = {
+        code: 0,
+        data: template['proxy-groups']
+    }
+
+}
+
+router.get('/rss', convert);
+router.post('/link', genLink);
+router.get('/rules', getRules);
 
 module.exports = router

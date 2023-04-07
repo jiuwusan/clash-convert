@@ -4,15 +4,16 @@ const bodyParser = require('koa-bodyparser');
 const path = require('path');
 const http = require('http');
 const fs = require('fs');
-
+const serve = require('koa-static');
+const static   = serve(path.join(__dirname)+'/public/');
 
 const genPath = (p) => {
     return path.join(__dirname, p);
 }
 
-
 const app = new Koa();
 
+app.use(static); 
 app.use(bodyParser());
 app.use(koaJson());
 
