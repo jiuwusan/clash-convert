@@ -1,7 +1,7 @@
 import ApiGenerator from './ApiGenerator'
 import request from './request'
 
-const { genApi } = new ApiGenerator(request, '/apiv1', (config) => {
+const { genApi } = new ApiGenerator(request, '', (config) => {
     return config
 }, (res) => {
     if (res.code !== 0) {
