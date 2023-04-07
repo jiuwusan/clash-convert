@@ -8,7 +8,7 @@ RUN npm install
 # 打包静态资源
 RUN npm run build
 WORKDIR /app
-COPY ./clash-fe/build/ ./clash-server/public/sub-web/
+COPY --from=builder ./clash-fe/build/ ./clash-server/public/sub-web/
 # cd到 后端 文件夹下
 WORKDIR /app/clash-server
 # 安装项目依赖包
