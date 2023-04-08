@@ -12,7 +12,7 @@ const UUID = (max = 6) => {
 }
 
 const genPath = (p) => {
-    let root = (__dirname + '').replace('\\service', '')
+    let root = (__dirname + '').replace(/(\\|\/)service/, '')
     console.log('genPath--',root);
     return path.join(root, p);
 }
