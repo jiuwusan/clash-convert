@@ -2,7 +2,7 @@ const fs = require('fs');
 const YAML = require('js-yaml');
 const router = require('koa-router')();
 const https = require('https')
-const database = require('../database/index')
+const database = require('../service/database')
 
 const COUNTRYS = [{ "English": "HK", "Chinese": "香港", "id": "1001" },
 { "English": "TW", "Chinese": "台湾", "id": "1002" },
@@ -284,14 +284,13 @@ const convert = async (ctx) => {
     rules.splice(10, 0, ...config['cus-rules']);
     config.rules = rules;
     ctx.set('Content-disposition', `attachment;filename=${config.rename}.yaml`);
-    ctx.set('Content-type', 'application/pdf');
+    ctx.set('Content-type', 'application/yaml');
     delete config.rename;
     delete config['cus-rules'];
     delete config.urls;
     // 通用配置
     let clash = YAML.load(fs.readFileSync(ctx.genPath('/template/clash.yaml'), 'utf8'));
     let lastConfig = { ...clash, proxies: config.proxies, 'proxy-groups': config['proxy-groups'], rules: config.rules }
-    console.log(JSON.stringify(lastConfig));
     ctx.body = YAML.dump(lastConfig)
 }
 
@@ -311,7 +310,10 @@ const genLink = (ctx) => {
             item.proxies[0] = temp;
             return item
         }),
-        'cus-rules': cusRules ? cusRules.split('\n') : [],
+        'cus-rules': cusRules ? cusRules.split('\n').map((item) => {
+            item = item.replace(/^(\ *-*\ *)/, '');
+            return item
+        }) : [],
     }
 
     let uid = database.push(data);
