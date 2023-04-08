@@ -1,5 +1,5 @@
 .sub-box {
-    max-width: 1280px;
+    max-width: 1300px;
     width: 80%;
     border-radius: 8px;
     box-sizing: border-box;
@@ -28,4 +28,10 @@
 .sub-radio-label {
     margin-right: 5px;
     min-width: 90px;
+}
+
+@media screen and (max-width:1260px) {
+    .sub-radio-item {
+        width: 100%;
+    }
 }
