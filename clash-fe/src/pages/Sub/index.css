@@ -1,16 +1,27 @@
 .sub-box {
-    width: 1280px;
-    border: 1px solid rgba(5, 5, 5, 0.06);
+    width: 80%;
     border-radius: 8px;
     box-sizing: border-box;
     padding: 30px;
-    background: rgba(255, 255, 255, .85);
+}
+
+.sub-radio-list {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.sub-radio-item {
+    width: 49%;
 }
 
 .sub-radio-group {
     margin-top: 5px;
-    display: flex;
+    display: inline-flex;
     align-items: center;
+    border: 1px solid rgba(5, 5, 5, 0.2);
+    border-radius: 4px;
 }
 
 .sub-radio-label {

@@ -1,5 +1,5 @@
 import './index.css';
-import { useRules, useShortLink,useServerLink } from './hooks';
+import { useRules, useShortLink, useServerLink } from './hooks';
 import { Form, Input, Select, Radio, Button, Space } from '../../component';
 
 const { TextArea } = Input;
@@ -7,16 +7,18 @@ const { TextArea } = Input;
 const RuleItem = (props) => {
     const { data: { proxies = [], name }, ...rest } = props;
     let proxiesOption = proxies.map((item, index) => ({ label: item, value: index }))
-    return <div className='sub-radio-group'>
-        <div className='sub-radio-label'>{name}</div>
-        <Radio.Group {...rest} options={proxiesOption} optionType="button" buttonStyle="solid" size='small' />
+    return <div className='sub-radio-item'>
+        <div className='sub-radio-group'>
+            <div className='sub-radio-label'>{name}</div>
+            <Radio.Group {...rest} options={proxiesOption} optionType="button" buttonStyle="solid" size='small' />
+        </div>
     </div>
 }
 
 const Rules = (props) => {
     const [rules, onItemChange] = useRules(props);
 
-    return <div>
+    return <div className='sub-radio-list'>
         {rules.map((item, index) => <RuleItem key={item.name} data={item} value={item.checked} onChange={(event) => onItemChange(event, index)}></RuleItem>)}
     </div>
 }
@@ -27,7 +29,7 @@ const ServerInput = (props) => {
 }
 
 const Sub = () => {
-    const [shorLink, formSubmit,onCopy] = useShortLink();
+    const [shorLink, formSubmit, onCopy] = useShortLink();
 
     return <div className='sub-box'>
         <Form labelCol={{ span: 4 }} layout="horizontal" onFinish={formSubmit}>
