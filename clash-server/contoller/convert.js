@@ -193,7 +193,6 @@ const getCountry = (node) => {
             break;
         }
     }
-    console.log(node, ' ->  getCountry====', result);
     return result;
 }
 
@@ -240,10 +239,10 @@ const convert = async (ctx) => {
         }
     }
 
-    // proxies = proxies.map((item) => {
-    //     item.name = item.name.replace(/\ +/g, ' ')
-    //     return item
-    // });
+    proxies = proxies.map((item)=>{
+        item.name = `${item.name} - ${database.UUID()}`;
+        return item
+    })
 
     // 分组
     let proxyGroups = proxies.reduce((prev, next) => {
@@ -282,7 +281,7 @@ const convert = async (ctx) => {
     }
 
     let rules = YAML.load(fs.readFileSync(ctx.genPath('/template/rules.yaml'), 'utf8')).rules;
-    rules.splice(10, 0, ...config['cus-rules']);
+    rules.splice(10, 0, ...[...config['cus-rules'], ...rulesUtils.query(rules)]);
     config.rules = rules;
     ctx.set('Content-disposition', `attachment;filename=${config.rename}.yaml`);
     ctx.set('Content-type', 'application/yaml');
@@ -340,13 +339,22 @@ const getRules = (ctx) => {
 }
 
 const pushRules = (ctx) => {
-    let { rules } = ctx.request.body;
+    let { rules, uid } = ctx.request.query;
+
     rules = rules ? rules.split('\n').map((item) => {
         item = item.replace(/^(\ *-*\ *)/, '');
         return item
     }) : []
-    rulesUtils.push(rules);
 
+    if (!uid) {
+        rulesUtils.push(rules);
+    } else {
+        let config = database.query(uid);
+        rules.forEach(item => {
+            config['cus-rules'].indexOf(item) === -1 && (config['cus-rules'].push(item))
+        });
+        database.push(config, uid);
+    }
     ctx.body = {
         code: 0,
         data: {},
@@ -358,6 +366,6 @@ const pushRules = (ctx) => {
 router.get('/rss', convert);
 router.post('/link', genLink);
 router.get('/rules', getRules);
-router.post('/rules/push', pushRules);
+router.get('/rules/push', pushRules);
 
 module.exports = router

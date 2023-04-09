@@ -30,7 +30,6 @@ const push = (rules = []) => {
         datajson.rules.indexOf(item) === -1 && (datajson.rules.push(item))
     });
     baseConfig(datajson);
-    return uid
 }
 
 const query = () => {

@@ -13,7 +13,7 @@ const UUID = (max = 6) => {
 
 const genPath = (p) => {
     let root = (__dirname + '').replace(/(\\|\/)service/, '')
-    console.log('genPath--',root);
+    console.log('genPath--', root);
     return path.join(root, p);
 }
 
@@ -23,14 +23,13 @@ const database = () => {
     try {
         datajson = JSON.parse(fs.readFileSync(databasePath, 'utf8'));
     } catch (error) {
-     console.log('读取数据文件失败，尝试创建');   
+        console.log('读取数据文件失败，尝试创建');
     }
     return datajson
 }
 
-const push = (data) => {
+const push = (data, uid) => {
     let datajson = database();
-    let uid;
     while (!uid) {
         // 防止重复覆盖
         let temp = UUID();
@@ -49,5 +48,6 @@ const query = (uid) => {
 
 module.exports = {
     push,
-    query
+    query,
+    UUID
 }
