@@ -3,6 +3,7 @@ const YAML = require('js-yaml');
 const router = require('koa-router')();
 const https = require('https')
 const database = require('../service/database')
+const rulesUtils = require('../service/rules')
 
 const COUNTRYS = [{ "English": "HK", "Chinese": "香港", "id": "1001" },
 { "English": "TW", "Chinese": "台湾", "id": "1002" },
@@ -338,8 +339,25 @@ const getRules = (ctx) => {
 
 }
 
+const pushRules = (ctx) => {
+    let { rules } = ctx.request.body;
+    rules = rules ? rules.split('\n').map((item) => {
+        item = item.replace(/^(\ *-*\ *)/, '');
+        return item
+    }) : []
+    rulesUtils.push(rules);
+
+    ctx.body = {
+        code: 0,
+        data: {},
+        msg: '成功'
+    }
+
+}
+
 router.get('/rss', convert);
 router.post('/link', genLink);
 router.get('/rules', getRules);
+router.post('/rules/push', pushRules);
 
 module.exports = router
