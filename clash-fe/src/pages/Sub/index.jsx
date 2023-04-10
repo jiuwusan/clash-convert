@@ -34,7 +34,7 @@ const Sub = () => {
     return <div className='sub-box'>
         <Form labelCol={{ span: 4 }} layout="horizontal" onFinish={formSubmit}>
             <Form.Item label="订阅链接" name='urls' rules={[{ required: true }]}>
-                <TextArea placeholder='注意 ；每行只能一个链接' />
+                <TextArea placeholder='注意 ；每行只能一个链接' autoSize />
             </Form.Item>
             <Form.Item label="重命名" name='rename'>
                 <Input />
@@ -49,7 +49,7 @@ const Sub = () => {
                 <Rules />
             </Form.Item>
             <Form.Item label="自定义规则" name='cusRules'>
-                <TextArea placeholder='注意 ；每行只能一个规则' />
+                <TextArea placeholder='注意 ；每行只能一个规则' autoSize />
             </Form.Item>
             <Form.Item label="短链接">
                 <Space.Compact style={{ width: '100%' }}>
