@@ -57,9 +57,12 @@ const Sub = () => {
                     <Button type="primary" onClick={onCopy}>复制</Button>
                 </Space.Compact>
             </Form.Item>
-            <Form.Item label="操作">
+            <Space.Compact className='sub-from-button'>
+                <Form.Item name='uid'>
+                    <Input placeholder='请填入 原链接或 uid' style={{ width: '200px' }} />
+                </Form.Item>
                 <Button type="primary" block htmlType="submit">生成订阅链接</Button>
-            </Form.Item>
+            </Space.Compact>
         </Form>
     </div>
 }

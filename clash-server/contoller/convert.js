@@ -239,7 +239,7 @@ const convert = async (ctx) => {
         }
     }
 
-    proxies = proxies.map((item)=>{
+    proxies = proxies.map((item) => {
         item.name = `${item.name} - ${database.UUID()}`;
         return item
     })
@@ -296,7 +296,7 @@ const convert = async (ctx) => {
 
 
 const genLink = (ctx) => {
-    let { urls, rename = 'config', proxyGroups, cusRules, client, baseApi = '' } = ctx.request.body;
+    let { urls, rename = 'config', proxyGroups, cusRules, client, baseApi = '', uid } = ctx.request.body;
 
     let data = {
         rename,
@@ -316,12 +316,12 @@ const genLink = (ctx) => {
         }) : [],
     }
 
-    let uid = database.push(data);
+    let rss = database.push(data, uid);
 
     ctx.body = {
         code: 0,
         data: {
-            rss: `${baseApi}/rss?uid=${uid}`
+            rss: `${baseApi}/rss?uid=${rss}`
         }
     }
 

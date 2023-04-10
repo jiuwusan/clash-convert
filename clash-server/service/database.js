@@ -28,6 +28,12 @@ const database = () => {
     return datajson
 }
 
+/**
+ * 
+ * @param {*} data 
+ * @param {*} uid 覆盖更新
+ * @returns 
+ */
 const push = (data, uid) => {
     let datajson = database();
     while (!uid) {
