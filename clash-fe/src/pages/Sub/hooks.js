@@ -43,6 +43,8 @@ export const useShortLink = (props) => {
         if (rs.code === 0) {
             setShortLink(rs.data.rss)
             message.success('订阅链接已生成，点击复制');
+        } else {
+            message.error(rs.msg);
         }
     }
 

@@ -59,7 +59,10 @@ const Sub = () => {
             </Form.Item>
             <Space.Compact className='sub-from-button'>
                 <Form.Item name='uid'>
-                    <Input placeholder='请填入 原链接或 uid' style={{ width: '200px' }} />
+                    <Input placeholder='UID' style={{ width: '120px' }} />
+                </Form.Item>
+                <Form.Item name='secret'>
+                    <Input placeholder='Secret' style={{ width: '120px' }} />
                 </Form.Item>
                 <Button type="primary" block htmlType="submit">生成订阅链接</Button>
             </Space.Compact>

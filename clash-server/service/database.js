@@ -36,6 +36,11 @@ const database = () => {
  */
 const push = (data, uid) => {
     let datajson = database();
+    let config = datajson[uid];
+    data.secret = Buffer.from(data.secret, "base64").toString();
+    if (config && data.secret !== config.secret)
+        throw new Error('SecretKey 验证失败')
+        
     while (!uid) {
         // 防止重复覆盖
         let temp = UUID();

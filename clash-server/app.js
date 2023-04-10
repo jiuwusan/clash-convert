@@ -5,7 +5,7 @@ const path = require('path');
 const http = require('http');
 const fs = require('fs');
 const serve = require('koa-static');
-const static   = serve(path.join(__dirname)+'/public/');
+const static = serve(path.join(__dirname) + '/public/');
 
 const genPath = (p) => {
     return path.join(__dirname, p);
@@ -13,7 +13,7 @@ const genPath = (p) => {
 
 const app = new Koa();
 
-app.use(static); 
+app.use(static);
 app.use(bodyParser());
 app.use(koaJson());
 
@@ -21,7 +21,16 @@ app.use(koaJson());
 app.use(async (ctx, next) => {
     ctx.genPath = genPath;
     // 挂载全局方法
-    await next();
+    try {
+        await next();
+    } catch (error) {
+       console.log('error -> ',error)
+        ctx.body = {
+            code: error.code || 99,
+            msg: error.message,
+            data: error.data
+        }
+    }
 });
 
 // routes
@@ -31,11 +40,6 @@ fs.readdirSync(path.join(__dirname, 'routes')).forEach(function (file) {
 
 app.use(function (ctx, next) {
     ctx.redirect('/404.html');
-});
-
-app.on('error', (error, ctx) => {
-    console.log('something error ' , error)
-    ctx.redirect('/500.html');
 });
 
 http.createServer(app.callback())

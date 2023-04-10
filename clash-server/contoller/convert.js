@@ -288,6 +288,7 @@ const convert = async (ctx) => {
     delete config.rename;
     delete config['cus-rules'];
     delete config.urls;
+    delete config.secret;
     // 通用配置
     let clash = YAML.load(fs.readFileSync(ctx.genPath('/template/clash.yaml'), 'utf8'));
     let lastConfig = { ...clash, proxies: config.proxies, 'proxy-groups': config['proxy-groups'], rules: config.rules }
@@ -296,9 +297,10 @@ const convert = async (ctx) => {
 
 
 const genLink = (ctx) => {
-    let { urls, rename = 'config', proxyGroups, cusRules, client, baseApi = '', uid } = ctx.request.body;
+    let { urls, rename = 'config', proxyGroups, cusRules, client, baseApi = '', uid, secret = '' } = ctx.request.body;
 
     let data = {
+        secret,
         rename,
         urls: urls.split('\n'),
         proxies: [],
