@@ -85,7 +85,7 @@ const convert = async (ctx) => {
         proxies: [],
     })
 
-    if (config['proxy-groups'][selectIdx].proxies.findIndex((item) => (item.name.indexOf('环游世界' > -1))) === -1)
+    if (config['proxy-groups'].findIndex((item) => (item.name.indexOf('环游世界' > -1))) === -1)
         config['proxy-groups'][selectIdx].proxies.unshift('🌐 环游世界')
 
     let worldIdx = selectIdx + 1;

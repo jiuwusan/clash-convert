@@ -64,7 +64,7 @@ const Sub = () => {
                 <Form.Item name='secret'>
                     <Input placeholder='Secret' style={{ width: '120px' }} />
                 </Form.Item>
-                <Button type="primary" block htmlType="submit">生成订阅链接</Button>
+                <Button type="primary" htmlType="submit" style={{ flex: 1 }}>生成订阅链接</Button>
             </Space.Compact>
         </Form>
     </div>
