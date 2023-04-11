@@ -4,6 +4,7 @@ const router = require('koa-router')();
 const https = require('https')
 const database = require('../service/database')
 const rulesUtils = require('../service/rules')
+const utils = require('../service/utils')
 
 const COUNTRYS = [{ "English": "HK", "Chinese": "香港", "id": "1001" },
 { "English": "TW", "Chinese": "台湾", "id": "1002" },
@@ -216,8 +217,6 @@ const readFileNetwork = (url) => {
     })
 }
 
-
-
 /**
  * 查询列表
  * 
@@ -232,7 +231,13 @@ const convert = async (ctx) => {
 
     for (let i = 0; i < config.urls.length; i++) {
         try {
-            let sub = YAML.load(await readFileNetwork(config.urls[i]));
+            let subStr = await readFileNetwork(config.urls[i]);
+            console.log('subStr--', subStr)
+            let sub = { proxies: [] }
+            if (utils.isBase64(subStr))
+                sub = utils.baseStr2proxies(subStr)
+            else
+                sub = YAML.load(subStr);
             proxies.push.apply(proxies, sub.proxies);
         } catch (error) {
             console.log(`${config.urls[i]} 订阅出错`);
