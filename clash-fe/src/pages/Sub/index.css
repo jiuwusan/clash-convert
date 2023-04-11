@@ -40,3 +40,8 @@
     width: 100%;
     padding-left: 16.5%;
 }
+
+.sub-from-submit{
+    display: flex;
+    flex-grow: 1;
+}
