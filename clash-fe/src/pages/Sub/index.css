@@ -39,6 +39,7 @@
 .sub-from-button {
     width: 100%;
     padding-left: 16.5%;
+    box-sizing: border-box;
 }
 
 .sub-from-submit{
