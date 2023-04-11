@@ -1,49 +1,38 @@
 function baseStr2proxies(baseStr) {
-    let result = Buffer.from(baseStr, "base64").toString();
-    // proxies:
-    //   - name: 香港-01 - 5doksR
-    //     type: ss
-    //     server: sczx.bzlxzl.com
-    //     port: 57001
-    //     cipher: chacha20-ietf-poly1305
-    //     password: ojhAGa
-    //     udp: true
-    result = decodeURIComponent(result);
-    let proxies = result.split('\n');
-    proxies = proxies.map((item) => {
-        if (item) {
-            item = item.replace(/ss:\/\//, '')
-            let itemArr = item.split('@');
-            let skey = Buffer.from(itemArr[0], "base64").toString().split(':');
-            let serverStr = itemArr[1].split('/?');
-            let hostArr = serverStr[0].split(':');
-            let lastStr = serverStr[1].split('#');
-            let pluginStr = lastStr[0].split(';').map((p) => {
-                console.log(p)
-                p = p.split('=')
-                return p[1]
-            });
-
-            let proxie = {
-                name: lastStr[1].replace('\r', ''),
-                type: 'ss',
-                server: hostArr[0],
-                port: Number(hostArr[1]),
-                cipher: skey[0],
-                password: skey[1],
-                plugin: 'obfs',
-                'plugin-opts': { mode: pluginStr[1], host: pluginStr[2] },
-                // tfo: true,
-                udp: true,
-            }
-
-            return proxie
-        }
-        console.log('item---',item)
-        return item
-    })
-    proxies.pop();
-    return { proxies }
+    let rss = Buffer.from(baseStr, "base64").toString();
+    rss = decodeURIComponent(rss).split('\n');
+    let proxies = [];
+    for (let i = 0; i < rss.length; i++) {
+        let item = rss[i];
+        if (!item) continue;
+        //开始解析
+        // 加密方式 ss:\/\/(.+)@
+        // 域名 @(.+):
+        // 端口 :(\d+)/
+        // 插件 (plugin.+)#
+        // 名称 #(.+)
+        let type = 'ss';
+        let secret = item.match(/ss:\/\/(.+)@/)[1];
+        let [cipher, password] = Buffer.from(secret, "base64").toString().split(':');
+        let server = item.match(/@(.+):/)[1];
+        let port = Number(item.match(/:(\d+)\//)[1]);
+        let [plugin, mode, host] = item.match(/(plugin.+)#/)[1].split(';').map((p) => p.split('=')[1]);
+        let name = item.match(/#(.+)/)[1];
+        proxies.push({
+            name,
+            type,
+            server,
+            port,
+            cipher,
+            password,
+            plugin: 'obfs',
+            'plugin-opts': { mode, host },
+            udp: true
+        })
+    }
+    return {
+        proxies
+    }
 }
 
 const isBase64 = (str) => {

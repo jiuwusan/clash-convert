@@ -21,9 +21,10 @@ const database = () => {
     let databasePath = genPath('/database/data.json');
     let datajson = {};
     try {
-        datajson = JSON.parse(fs.readFileSync(databasePath, 'utf8'));
+        let dataStr = fs.readFileSync(databasePath, 'utf8');
+        datajson = JSON.parse(dataStr);
     } catch (error) {
-        console.log('读取数据文件失败，尝试创建');
+        console.log('读取数据文件失败');
     }
     return datajson
 }

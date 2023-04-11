@@ -2,6 +2,7 @@ proxy-groups:
   - name: 🔰 节点选择
     type: select
     proxies:
+      - 🌐 环游世界
       - 🎯 全球直连
   - name: 🎥 NETFLIX
     type: select
