@@ -98,6 +98,7 @@ const convert = async (ctx) => {
     let selectWorldIdx = config['proxy-groups'].findIndex((item) => (item.name.indexOf('环游世界' > -1)));
     if (selectWorldIdx === -1 && (selectWorldIdx = 0))
         config['proxy-groups'][selectIdx].proxies.unshift('🌐 环游世界')
+    selectWorldIdx++
     config['proxy-groups'][selectIdx].proxies.splice(selectWorldIdx, 0, '🥇 手动选择')
     let emojis = countrys.flagFn();
 
