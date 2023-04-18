@@ -57,6 +57,9 @@ const convert = async (ctx) => {
         return item
     })
 
+    // 手动分组
+    let manualProxies = []
+
     // 分组
     let proxyGroups = proxies.reduce((prev, next) => {
         let country = countrys.match(next.name);
@@ -65,8 +68,7 @@ const convert = async (ctx) => {
                 prev[country.translation].push(next.name)
             else
                 prev[country.translation] = [next.name]
-        // else
-        //     prev['其他'].push(next.name)
+        manualProxies.push(next.name)
         return prev
     }, {})
 
@@ -78,6 +80,14 @@ const convert = async (ctx) => {
     })
 
     config['proxy-groups'].splice(selectIdx + 1, 0, {
+        name: '🥇 手动选择',
+        type: 'select',
+        proxies: manualProxies
+    })
+
+    let worldIdx = selectIdx + 2;
+
+    config['proxy-groups'].splice(worldIdx, 0, {
         name: '🌐 环游世界',
         type: 'url-test',
         url: 'http://www.gstatic.com/generate_204',
@@ -85,11 +95,10 @@ const convert = async (ctx) => {
         proxies: [],
     })
 
-    if (config['proxy-groups'].findIndex((item) => (item.name.indexOf('环游世界' > -1))) === -1)
+    let selectWorldIdx = config['proxy-groups'].findIndex((item) => (item.name.indexOf('环游世界' > -1)));
+    if (selectWorldIdx === -1 && (selectWorldIdx = 0))
         config['proxy-groups'][selectIdx].proxies.unshift('🌐 环游世界')
-
-    let worldIdx = selectIdx + 1;
-
+    config['proxy-groups'][selectIdx].proxies.splice(selectWorldIdx, 0, '🥇 手动选择')
     let emojis = countrys.flagFn();
 
     for (const key in proxyGroups) {
